@@ -1,6 +1,7 @@
 #!/bin/sh -e
 
-TMP_DIR=./ie-vm-fetch-workdir
+[ -z "$1" ] && { echo "Usage: $0 [path of RAR downloads]"; exit 1; }
+TMP_DIR="$1"
 [ -d "$TMP_DIR" ] || { echo $TMP_DIR missing ; exit 1; }
 
 # Extract VMDK from archive

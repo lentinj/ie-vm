@@ -11,4 +11,4 @@ for url in $(curl -s "$1" | dos2unix); do
 done
 wait
 
-exec ./convert.sh
+exec ./convert.sh $TMP_DIR
