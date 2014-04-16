@@ -25,6 +25,7 @@ Using
 #. Run ``start.sh (name of image)``.
 #. Install the virtio drivers from the CD drive. Change anything else you fancy
    whilst you're there, e.g. home page.
+#. Shut down windows, note qemu is still running.
 #. At the QEMU command prompt, run ``commit ide0-hd0`` to write changes back to
    the QCOW2 file.
 #. Delete the ``ie-vm-fetch-workdir`` once you're happy everything worked. If
@@ -33,3 +34,9 @@ Using
 
 After this, you won't ever need to shut windows down properly, since by default
 start.sh writes changes to a temporary file and does not change the QCOW2 file.
+
+Code 39 when installing VirtIO drivers
+--------------------------------------
+
+Vista and WinXP can use the Win8 driver incorrectly. Select the directory manually
+and then install.
