@@ -7,7 +7,7 @@ TMP_DIR=./ie-vm-fetch-workdir
 
 # Fetch constituent parts
 for url in $(curl -s "$1" | dos2unix); do
-    (cd $TMP_DIR && curl -O $url; ) &
+    (cd $TMP_DIR && curl -C - -O $url; ) &
 done
 wait
 
