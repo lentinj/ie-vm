@@ -16,7 +16,11 @@ VMDKFOOTERVER=$(($VMDKFOOTER  + 4))
 case "`xxd -ps -s $VMDKFOOTERVER -l 1 \"$VMDK\"`" in
   03)
     echo "$VMDK is VMDK3, patching to VMDK2."
-    /bin/echo -en '\x02' | dd conv=notrunc status=noxfer oflag=seek_bytes seek="$VMDKFOOTERVER"  of="$VMDK"
+    /bin/echo -en '\x02' | dd conv=notrunc \
+                              status=noxfer \
+                              bs=1 \
+                              seek="$VMDKFOOTERVER" \
+                              of="$VMDK"
     ;;
   02)
     echo "Already a VMDK2 file"
