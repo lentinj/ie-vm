@@ -2,7 +2,7 @@
 
 if [ ! -e virtio*.iso ]; then
     echo Fetching virtIO drivers...
-    curl -O http://alt.fedoraproject.org/pub/alt/virtio-win/latest/images/virtio-win-0.1-74.iso
+    curl -O http://alt.fedoraproject.org/pub/alt/virtio-win/latest/images/virtio-win-0.1-81.iso
 fi
 
 qemu-system-x86_64 -enable-kvm \
