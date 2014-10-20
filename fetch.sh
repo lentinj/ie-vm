@@ -35,10 +35,11 @@ case "`xxd -ps -s $VMDKFOOTERVER -l 1 \"$VMDK\"`" in
 esac
 
 # Convert into QCOW2
-qemu-img convert -f vmdk -O qcow2 "$VMDK" "$(basename "$TMP_DIR"/*.ovf .ovf).qcow2"
+QCOW2="$(basename "$TMP_DIR"/*.ovf .ovf).qcow2"
+qemu-img convert -f vmdk -O qcow2 "$VMDK" "$QCOW2"
 
 # Remove now-useless files
 rm "$VMDK" "$TMP_DIR"/*.ovf
 
 echo Finished! Delete "$TMP_DIR" to tidy up
-echo Run ./start.sh '"'"$(basename "$TMP_DIR"/*.ovf .ovf).qcow2"'"' to start IE
+echo Run ./start.sh '"'"$QCOW2"'"' to start IE
