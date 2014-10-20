@@ -4,6 +4,9 @@ modern.ie VMs under KVM/QEMU
 Automates the process of getting the modern.ie images and converting them for
 usage with KVM. There are 3 scripts:
 
+ie-urls.sh
+    Attempt to parse the relevant "Batch File Download" URLs from the modern.ie
+    page
 fetch.sh (url)
     Given a URL to a .txt file full of URLs (like what MS link to), fetch all
     files within, uncompress and convert into a QCOW2 file for use with QEMU,
