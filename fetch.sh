@@ -5,9 +5,6 @@
 TMP_DIR=./ie-vm-fetch-workdir
 
 # Fetch constituent parts
-for url in $(curl -s "$1" | dos2unix); do
-    (cd $TMP_DIR && curl -C - -O $url; ) &
-done
-wait
+wget -q -O - "$1" | dos2unix | xargs -n1 -P8 wget -c -P "$TMP_DIR"
 
 exec ./convert.sh $TMP_DIR

@@ -17,11 +17,9 @@ start.sh (QCOW image)
 Using
 -----
 
-#. Ensure depenencies are installed with ``apt-get install curl unrar qemu-system-x86 qemu-utils``
+#. Ensure depenencies are installed with ``apt-get install wget unrar qemu-system-x86 qemu-utils``
 #. Run ``fetch.sh http://../IE11.Win8.1.For.LinuxVirtualBox.txt`` and wait.
-   There are concurrent curl scripts running, unfortunately their progress will
-   make a mess on the screen. Eventually a QCOW2 file will come out the other
-   end.
+   The multiple wgets will fight for the screen somewhat.
 #. Run ``start.sh (name of image)``.
 #. Install the virtio drivers from the CD drive. Change anything else you fancy
    whilst you're there, e.g. home page.
