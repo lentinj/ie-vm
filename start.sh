@@ -2,7 +2,8 @@
 
 if [ ! -e virtio*.iso ]; then
     echo Fetching virtIO drivers...
-    wget -c http://alt.fedoraproject.org/pub/alt/virtio-win/latest/images/virtio-win-0.1-74.iso
+    wget -c --recursive --no-directories --accept-regex 'virtio.*\.iso' \
+        http://alt.fedoraproject.org/pub/alt/virtio-win/stable/
 fi
 
 qemu-system-x86_64 -enable-kvm \
