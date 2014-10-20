@@ -25,7 +25,8 @@ Using
    The multiple wgets will fight for the screen somewhat.
 #. Run ``start.sh (name of image)``.
 #. Install the virtio drivers from the CD drive. Change anything else you fancy
-   whilst you're there, e.g. home page.
+   whilst you're there, e.g. home page to ``http://10.0.2.2:8000`` (your laptop's
+   port 8000).
 #. Shut down windows, note qemu is still running.
 #. At the QEMU command prompt, run ``commit ide0-hd0`` to write changes back to
    the QCOW2 file.
