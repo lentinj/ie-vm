@@ -42,3 +42,12 @@ Code 39 when installing VirtIO drivers
 
 Vista and WinXP can use the Win8 driver incorrectly. Select the directory manually
 and then install.
+
+Creating a specialised VM
+-------------------------
+
+If you want to have a VM that's customised for your project somehow, you could
+just copy the .qcow2, however that's a lot of diskspace. Instead you can create
+a new image that's based on the contents of another file, for example::
+
+    qemu-img create -f qcow2 -b "IE9 - Win7.qcow2" MyProject.IE9.Win7.qcow2
