@@ -19,8 +19,8 @@ Using
 -----
 
 #. Ensure depenencies are installed with ``apt-get install wget unrar qemu-system-x86 qemu-utils``
-#. Go to http://modern.ie and copy the "Batch File Download" URL for the
-   Linux/VirtualBox VM for the version of IE you want.
+#. Run ``ie-urls.sh`` to list available Windows / IE images, or go to http://modern.ie
+   and copy the "Batch File Download" URL for the Linux/VirtualBox VM for the version of IE you want.
 #. Run ``fetch.sh http://../IE11.Win8.1.For.LinuxVirtualBox.txt`` and wait.
    The multiple wgets will fight for the screen somewhat.
 #. Run ``start.sh (name of image)``.
