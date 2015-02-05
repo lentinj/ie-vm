@@ -2,13 +2,19 @@
 
 [ -z "$1" ] && { echo "Usage: $0 [url to IE.txt file]"; exit 1; }
 
-TMP_DIR="./workdir-$(basename "$1" .txt)"
+SHORTNAME="$(basename "$1" .txt)"
+TMP_DIR="./workdir-$SHORTNAME"
 
 # Fetch constituent parts
 wget -q -O - "$1" | dos2unix | xargs -n1 -P8 wget -c -P "$TMP_DIR"
 
-# Extract VMDK from archive
-unrar-nonfree p -inul "$TMP_DIR"/*.sfx | tar -xvC "$TMP_DIR"
+cat $TMP_DIR/*.zip.* > $SHORTNAME.zip
+rm -f $TMP_DIR/*.zip.*
+unzip $SHORTNAME.zip
+rm -f $SHORTNAME.zip
+cat *.ova | tar -xvC "$TMP_DIR"
+rm -f *.ova
+
 VMDK="$(echo "$TMP_DIR"/*.vmdk)"
 
 # Hack into a VMDK2 image (from https://github.com/erik-smit/one-liners/blob/master/qemu-img.vmdk3.hack.sh)
@@ -39,7 +45,10 @@ QCOW2="$(basename "$TMP_DIR"/*.ovf .ovf).qcow2"
 qemu-img convert -f vmdk -O qcow2 "$VMDK" "$QCOW2"
 
 # Remove now-useless files
-rm "$VMDK" "$TMP_DIR"/*.ovf
+rm "$VMDK" "$TMP_DIR"/*.ov[fa]
 
-echo Finished! Delete "$TMP_DIR" to tidy up
+echo Finished! Deleting "$TMP_DIR" to tidy up
+ls -la "$TMP_DIR"
+rm -fr "$TMP_DIR"
+ln -sf "$QCOW2" "disk.qcow2"
 echo Run ./start.sh '"'"$QCOW2"'"' to start IE
