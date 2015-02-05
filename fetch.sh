@@ -10,6 +10,7 @@ wget -q -O - "$1" | dos2unix | xargs -n1 -P8 wget -c -P "$TMP_DIR"
 # Extract VMDK from archive
 cat "$TMP_DIR"/*.zip.* | funzip | tar -xvC "$TMP_DIR"
 VMDK="$(echo "$TMP_DIR"/*.vmdk)"
+[ -e "$VMDK" ] || { echo "No VMDK extracted" 1>&2; exit 1; }
 
 # Hack into a VMDK2 image (from https://github.com/erik-smit/one-liners/blob/master/qemu-img.vmdk3.hack.sh)
 FULLSIZE=$(stat -c%s "$VMDK")
