@@ -24,7 +24,8 @@ Using
    and copy the "Batch File Download" URL for the Linux/VirtualBox VM for the version of IE you want.
 #. Run ``fetch.sh http://../IE11.Win8.1.For.LinuxVirtualBox.txt`` and wait.
    The multiple wgets will fight for the screen somewhat.
-#. Run ``start.sh (name of image)``.
+#. Run ``start.sh (name of image)``. Or omit the name if you want to run the
+   most recent QCOW2 file.
 #. Install the virtio drivers from the CD drive. Change anything else you fancy
    whilst you're there, e.g. home page to ``http://10.0.2.2:8000`` (your laptop's
    port 8000).
