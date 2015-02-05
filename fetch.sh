@@ -48,7 +48,6 @@ qemu-img convert -f vmdk -O qcow2 "$VMDK" "$QCOW2"
 rm "$VMDK" "$TMP_DIR"/*.ov[fa]
 
 echo Finished! Deleting "$TMP_DIR" to tidy up
-ls -la "$TMP_DIR"
-rm -fr "$TMP_DIR"
+rmdir "$TMP_DIR" || true
 ln -sf "$QCOW2" "disk.qcow2"
 echo Run ./start.sh '"'"$QCOW2"'"' to start IE
