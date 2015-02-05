@@ -13,4 +13,5 @@ qemu-system-x86_64 -enable-kvm \
     -net user \
     -m 1024M \
     -monitor stdio \
+    --vnc 0.0.0.0:5900 \
     -snapshot -no-shutdown
