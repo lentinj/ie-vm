@@ -7,8 +7,13 @@ TMP_DIR="./workdir-$(basename "$1" .txt)"
 # Fetch constituent parts
 wget -q -O - "$1" | dos2unix | xargs -n1 -P8 wget -c -P "$TMP_DIR"
 
+# Identify unrar
+UNRAR=unrar
+if which unrar-free; then UNRAR=unrar-free ; fi
+if which unrar-nonfree; then UNRAR=unrar-nonfree ; fi
+
 # Extract VMDK from archive
-unrar-free p -inul "$TMP_DIR"/*.sfx | tar -xvC "$TMP_DIR"
+$UNRAR p -inul "$TMP_DIR"/*.sfx | tar -xvC "$TMP_DIR"
 VMDK="$(echo "$TMP_DIR"/*.vmdk)"
 
 # Hack into a VMDK2 image (from https://github.com/erik-smit/one-liners/blob/master/qemu-img.vmdk3.hack.sh)
