@@ -61,6 +61,10 @@ if [ ! -e virtio*.iso ]; then
     if [ -x xorriso ]; then
         mkdir -p shared/
         xorriso -indev virtio-win-0.1-81.iso -osirrox "on" -extract / shared/
+	# Horribly lowercase the 3 nested directories of shared/ - linux filesystems are case sensitive by default
+        find shared/ -exec rename "y/A-Z/a-z/" {} \; || \
+        find shared/ -exec rename "y/A-Z/a-z/" {} \; || \
+        find shared/ -exec rename "y/A-Z/a-z/" {} \;
     fi
 fi
 
