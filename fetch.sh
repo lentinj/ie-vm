@@ -56,17 +56,21 @@ if [ ! -e virtio*.iso ]; then
     echo Fetching virtIO drivers...
     wget -c --recursive --no-directories --accept-regex 'virtio.*\.iso' \
         http://alt.fedoraproject.org/pub/alt/virtio-win/stable/
-
-    # If we hav xorriso, extract the iso to a shared/ folder
-    if [ -x xorriso ]; then
-        mkdir -p shared/
-        xorriso -indev virtio-win-0.1-81.iso -osirrox "on" -extract / shared/
-	# Horribly lowercase the 3 nested directories of shared/ - linux filesystems are case sensitive by default
-        find shared/ -exec rename "y/A-Z/a-z/" {} \; || \
-        find shared/ -exec rename "y/A-Z/a-z/" {} \; || \
-        find shared/ -exec rename "y/A-Z/a-z/" {} \;
-    fi
 fi
+
+ # If we hav xorriso, extract the iso to a shared/ folder
+ if [ -x xorriso ]; then
+     if [ ! -d shared/ ]; then
+       mkdir -p shared/
+       xorriso -indev virtio-win-0.1-81.iso -osirrox "on" -extract / shared/
+       # Horribly lowercase the 3 nested directories of shared/ - linux filesystems are case sensitive by default
+       find shared/ -exec rename "y/A-Z/a-z/" {} \; || \
+       find shared/ -exec rename "y/A-Z/a-z/" {} \; || \
+       find shared/ -exec rename "y/A-Z/a-z/" {} \;
+     fi
+fi
+
+mkdir -p shared
 
 #  Grab the windows SPICE guest tools (includes the drivers grabbed separately below)
 [ -e shared/spice-guest-tools-0.74.exe ] || \
