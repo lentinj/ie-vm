@@ -19,7 +19,7 @@ Using
 -----
 
 #. Ensure depenencies are installed with
-   ``apt-get install wget unzip dos2unix qemu-system-x86 qemu-utils``
+   ``apt-get install wget unzip qemu-system-x86 qemu-utils``
 #. Run ``ie-urls.sh`` to list available Windows / IE images, or go to http://modern.ie
    and copy the "Batch File Download" URL for the Linux/VirtualBox VM for the version of IE you want.
 #. Run ``fetch.sh http://../IE11.Win8.1.For.LinuxVirtualBox.txt`` and wait.
