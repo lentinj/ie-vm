@@ -5,7 +5,7 @@
 TMP_DIR="./workdir-$(basename "$1" .txt)"
 
 # Fetch constituent parts
-wget -q -O - "$1" | dos2unix | xargs -n1 -P8 wget -c -P "$TMP_DIR"
+wget -q -O - "$1" | tr -d "\r" | xargs -n1 -P8 wget -c -P "$TMP_DIR"
 
 # Extract VMDK from archive
 cat "$TMP_DIR"/*.zip.* | funzip | tar -xvC "$TMP_DIR"
