@@ -8,8 +8,10 @@ NIC=virtio
 if [ "$NIC" = "virtio" ]; then
     if [ ! -e virtio*.iso ]; then
         echo Fetching virtIO drivers...
-        wget -c --recursive --no-directories --accept-regex 'virtio.*\.iso' \
-            http://alt.fedoraproject.org/pub/alt/virtio-win/stable/
+        VIRTIO_ISO=$(wget -q -O - http://alt.fedoraproject.org/pub/alt/virtio-win/stable/ \
+                    | grep -oiE 'virtio-win-[0-9.\-]+iso' \
+                    | head -1)
+        wget http://alt.fedoraproject.org/pub/alt/virtio-win/stable/${VIRTIO_ISO}
     fi
     CDIMAGE="-cdrom "virtio*.iso
 fi
