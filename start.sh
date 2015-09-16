@@ -7,8 +7,14 @@ NIC=virtio
 
 if [ "$NIC" = "virtio" ]; then
     if [ ! -e virtio*.iso ]; then
-        echo Fetching virtIO drivers...
-        wget https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
+        # RH now have a package
+        if [ -e "/usr/share/virtio-win/virtio-win.iso" ]; then
+            echo "Using ISO from virtio-win package."
+            ln -s /usr/share/virtio-win/virtio-win.iso ./virtio-win.iso;
+        else
+            echo Fetching virtIO drivers...
+            wget https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
+        fi
     fi
     CDIMAGE="-cdrom "virtio-win.iso
 fi
