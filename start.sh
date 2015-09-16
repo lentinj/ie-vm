@@ -8,12 +8,9 @@ NIC=virtio
 if [ "$NIC" = "virtio" ]; then
     if [ ! -e virtio*.iso ]; then
         echo Fetching virtIO drivers...
-        VIRTIO_ISO=$(wget -q -O - http://alt.fedoraproject.org/pub/alt/virtio-win/stable/ \
-                    | grep -oiE 'virtio-win-[0-9.\-]+iso' \
-                    | head -1)
-        wget http://alt.fedoraproject.org/pub/alt/virtio-win/stable/${VIRTIO_ISO}
+        wget https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
     fi
-    CDIMAGE="-cdrom "virtio*.iso
+    CDIMAGE="-cdrom "virtio-win.iso
 fi
 
 qemu-system-x86_64 -enable-kvm \
