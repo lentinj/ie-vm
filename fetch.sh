@@ -1,12 +1,17 @@
 #!/bin/sh -e
 
-[ -z "$1" ] && { echo "Usage: $0 [url to IE.txt file]"; exit 1; }
+[ -z "$1" ] && { echo "Usage: $0 [url to IE.txt  / .zip file]"; exit 1; }
 
-# TODO: If just a zip, fetch the zip into TMP_DIR
-TMP_DIR="./workdir-$(basename $(basename "$1" .txt) .zip | sed 's/%20/ /')"
-
-# Fetch constituent parts
-# wget -q -O - "$1" | tr -d "\r" | xargs -n1 -P8 wget -c -P "$TMP_DIR"
+# Fetch files required
+if echo "$1" | grep -qE '\.zip$'; then
+    # Fetch ZIP file
+    TMP_DIR="./workdir-$(basename "$1" .zip | sed 's/%20/ /')"
+    wget -c -P "$TMP_DIR" "$1"
+else
+    # Fetch each part of zip file
+    TMP_DIR="./workdir-$(basename "$1" .txt)"
+    wget -q -O - "$1" | tr -d "\r" | xargs -n1 -P8 wget -c -P "$TMP_DIR"
+fi
 
 # Extract VMDK from archive
 cat "$TMP_DIR"/*.zip* | funzip | tar -xvC "$TMP_DIR"
