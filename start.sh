@@ -1,9 +1,49 @@
 #!/bin/sh -e
 
-NIC=virtio
-[ "$1" = "--pcnet" ] && { NIC="pcnet"; shift; }
+NIC="virtio"
+QEMUSYS="qemu-system-x86_64"
+IMG=""
+RAM="1024"
 
-[ -n "$1" ] && IMG="$1" || IMG="$(ls -1t *.qcow2 | head -1)"
+# support more options
+# modified version of https://gist.github.com/adamhotep/895cebf290e95e613c006afbffef09d7
+usage() {
+    echo "start.sh [--pcnet] [--32bqemu] [--image imagename] [-m memoryForSystemInMB]"
+    exit
+}
+
+reset=true
+for arg in "$@"
+do
+    if [ -n "$reset" ]; then
+      unset reset
+      set --      # this resets the "$@" array so we can rebuild it
+    fi
+    case "$arg" in
+       --help)    set -- "$@" -h ;;
+       --pcnet)   set -- "$@" -p ;;
+       --32bqemu) set -- "$@" -b ;;
+       --image)   set -- "$@" -i ;;
+       # pass through anything else
+       *)         set -- "$@" "$arg" ;;
+    esac
+done
+# now we can process with getopt
+while getopts ":hpbi:m:" opt; do
+    case $opt in
+        h)  usage ;;
+        p) NIC="pcnet" ;;
+        b) QEMUSYS="qemu-system-i386" ;;
+        i) IMG=$OPTARG ;;
+        m) RAM=$OPTARG ;;
+        \?) usage ;;
+        :)
+        echo "option -$OPTARG requires an argument"
+        usage
+        ;;
+    esac
+done
+shift $((OPTIND-1))
 
 if [ "$NIC" = "virtio" ]; then
     LOCAL_ISO="$(ls -1t virtio*.iso | head -1)" 2>/dev/null
@@ -21,11 +61,13 @@ if [ "$NIC" = "virtio" ]; then
     fi
 fi
 
-qemu-system-x86_64 -enable-kvm \
+if [ "$IMG" = "" ]; then IMG="$(ls -1t *.qcow2 | head -1)"; fi
+
+$QEMUSYS -enable-kvm \
     -drive "file=$IMG" \
     $CDIMAGE \
     -net nic,model=$NIC \
     -net user \
-    -m 1024M \
+    -m "$RAM"M \
     -monitor stdio \
     -snapshot -no-shutdown
