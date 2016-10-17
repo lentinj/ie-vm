@@ -3,12 +3,12 @@
 NIC="virtio"
 QEMUSYS="qemu-system-x86_64"
 IMG=""
-RAM="1024"
+RAM="1024M"
 
 # support more options
 # modified version of https://gist.github.com/adamhotep/895cebf290e95e613c006afbffef09d7
 usage() {
-    echo "start.sh [--pcnet] [--32bqemu] [--image imagename] [-m memoryForSystemInMB]"
+    echo "start.sh [--pcnet] [--qemu-bin qemuSystemBinary] [--image imagename] [-m memoryForSystem]"
     exit
 }
 
@@ -22,18 +22,18 @@ do
     case "$arg" in
        --help)    set -- "$@" -h ;;
        --pcnet)   set -- "$@" -p ;;
-       --32bqemu) set -- "$@" -b ;;
+       --qemu-bin) set -- "$@" -b ;;
        --image)   set -- "$@" -i ;;
        # pass through anything else
        *)         set -- "$@" "$arg" ;;
     esac
 done
 # now we can process with getopt
-while getopts ":hpbi:m:" opt; do
+while getopts ":hpb:i:m:" opt; do
     case $opt in
         h)  usage ;;
         p) NIC="pcnet" ;;
-        b) QEMUSYS="qemu-system-i386" ;;
+        b) QEMUSYS=$OPTARG ;;
         i) IMG=$OPTARG ;;
         m) RAM=$OPTARG ;;
         \?) usage ;;
@@ -68,6 +68,6 @@ $QEMUSYS -enable-kvm \
     $CDIMAGE \
     -net nic,model=$NIC \
     -net user \
-    -m "$RAM"M \
+    -m "$RAM" \
     -monitor stdio \
     -snapshot -no-shutdown
