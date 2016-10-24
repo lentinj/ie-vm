@@ -28,4 +28,5 @@ qemu-system-x86_64 -enable-kvm \
     -net user \
     -m 1024M \
     -monitor stdio \
+    -vga std \
     -snapshot -no-shutdown
