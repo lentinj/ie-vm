@@ -2,13 +2,13 @@
 
 NIC="virtio"
 QEMUSYS="qemu-system-x86_64"
-IMG=""
+IMG="$(ls -1t *.qcow2 | head -1)"
 RAM="1024M"
 
 # support more options
 # modified version of https://gist.github.com/adamhotep/895cebf290e95e613c006afbffef09d7
 usage() {
-    echo "start.sh [--pcnet] [--qemu-bin qemuSystemBinary] [--image imagename] [-m memoryForSystem]"
+    echo "start.sh [--pcnet] [--qemu-bin qemuSystemBinary] [-m memoryForSystem] [(image filename)]"
     exit
 }
 
@@ -34,7 +34,6 @@ while getopts ":hpb:i:m:" opt; do
         h)  usage ;;
         p) NIC="pcnet" ;;
         b) QEMUSYS=$OPTARG ;;
-        i) IMG=$OPTARG ;;
         m) RAM=$OPTARG ;;
         \?) usage ;;
         :)
@@ -44,6 +43,9 @@ while getopts ":hpb:i:m:" opt; do
     esac
 done
 shift $((OPTIND-1))
+
+# If there's a positional argument, then use this as image name
+[ -n "$1" ] && { IMG="$1"; shift; }
 
 if [ "$NIC" = "virtio" ]; then
     LOCAL_ISO="$(ls -1t virtio*.iso | head -1)" 2>/dev/null
@@ -60,8 +62,6 @@ if [ "$NIC" = "virtio" ]; then
         CDIMAGE="-cdrom virtio-win.iso"
     fi
 fi
-
-if [ "$IMG" = "" ]; then IMG="$(ls -1t *.qcow2 | head -1)"; fi
 
 $QEMUSYS -enable-kvm \
     -drive "file=$IMG" \
