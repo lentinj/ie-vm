@@ -21,9 +21,9 @@ Using
 #. Ensure depenencies are installed with
    ``apt-get install wget unzip qemu-system-x86 qemu-utils``
 #. Run ``ie-urls.sh`` to list available Windows / IE images, or go to http://modern.ie
-   and copy the "Batch File Download" URL for the Linux/VirtualBox VM for the version of IE you want.
-#. Run ``fetch.sh http://../IE11.Win8.1.For.LinuxVirtualBox.txt`` and wait.
-   The multiple wgets will fight for the screen somewhat.
+   and select the VM you require and "Virtualbox", and copy the .zip location in the
+   download link.
+#. Run ``fetch.sh http://../IE11/IE11.Win7.VirtualBox.zip`` and wait.
 #. Run ``start.sh (name of image)``. Or omit the name if you want to run the
    most recent QCOW2 file.
 #. Install the virtio drivers from the CD drive. Change anything else you fancy
