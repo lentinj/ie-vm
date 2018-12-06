@@ -81,6 +81,8 @@ $QEMUSYS -enable-kvm \
     -net nic,model=$NIC \
     -net user \
     -m "$RAM" \
+    -usb -device usb-ehci,id=ehci \
+    -device usb-tablet \
     -monitor stdio \
     -vga std \
     -snapshot -no-shutdown
