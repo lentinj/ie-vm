@@ -15,6 +15,17 @@ start.sh (QCOW image)
     Fetch virtio.iso if not already there, and start the image with reasonable
     options
 
+Prerequisites
+-------------
+
+wget & QEMU must be installed.
+In addition `OVMF <https://github.com/tianocore/tianocore.github.io/wiki/OVMF>`__
+is needed for running Win10 VMs.
+
+Debian / apt-based distributions::
+
+    apt install wget qemu-system-x86 qemu-system-gui ovmf
+
 Using
 -----
 

@@ -47,25 +47,37 @@ shift $((OPTIND-1))
 # If there's a positional argument, then use this as image name
 [ -n "$1" ] && { IMG="$1"; shift; }
 
+EXTRA_ARGS=""
+
 if [ "$NIC" = "virtio" ]; then
     LOCAL_ISO="$(ls -1t virtio*.iso | head -1)" 2>/dev/null
     if [ -n "${LOCAL_ISO}" ]; then
         echo "Using local ISO file ${LOCAL_ISO}"
-        CDIMAGE="-cdrom ${LOCAL_ISO}"
+        EXTRA_ARGS="${EXTRA_ARGS} -cdrom ${LOCAL_ISO}"
     elif [ -e "/usr/share/virtio-win/virtio-win.iso" ]; then
         # RH now have a package
         echo "Using ISO from virtio-win package."
-        CDIMAGE="-cdrom /usr/share/virtio-win/virtio-win.iso"
+        EXTRA_ARGS="${EXTRA_ARGS} -cdrom /usr/share/virtio-win/virtio-win.iso"
     else
         echo Fetching virtIO drivers...
         wget https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
-        CDIMAGE="-cdrom virtio-win.iso"
+        EXTRA_ARGS="${EXTRA_ARGS} -cdrom virtio-win.iso"
     fi
+fi
+
+OVMF_BIN="${OVMF_BIN-/usr/share/qemu/OVMF.fd}"
+if echo ${IMG} | grep -q '.Win10.'; then
+    # Win10 images require EFI for booting
+    [ -f "${OVMF_BIN}" ] || {
+        echo "${OVMF_BIN} is not avialable, install the ovmf package or set OVMF_BIN to the location of OVMF.fd"
+        exit 1
+    }
+    EXTRA_ARGS="${EXTRA_ARGS} -bios ${OVMF_BIN}"
 fi
 
 $QEMUSYS -enable-kvm \
     -drive "file=$IMG" \
-    $CDIMAGE \
+    ${EXTRA_ARGS} \
     -net nic,model=$NIC \
     -net user \
     -m "$RAM" \
