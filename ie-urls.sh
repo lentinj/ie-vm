@@ -8,6 +8,6 @@ before
 EOF
 
 wget -q -O - https://developer.microsoft.com/en-us/microsoft-edge/api/tools/vms/ \
-    | grep -oiE 'https://[A-Z0-9._/]+\.VirtualBox\.zip' \
+    | grep -oiE 'https://[A-Z0-9._/]+vms[A-Z0-9._/]+\.VirtualBox\.zip' \
     | grep -v '/md5/' \
     | sort | uniq
