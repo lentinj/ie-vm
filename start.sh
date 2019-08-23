@@ -8,7 +8,7 @@ RAM="1024M"
 # support more options
 # modified version of https://gist.github.com/adamhotep/895cebf290e95e613c006afbffef09d7
 usage() {
-    echo "start.sh [--pcnet] [--qemu-bin qemuSystemBinary] [-m memoryForSystem] [(image filename)]"
+    echo "start.sh [--efi] [--pcnet] [--qemu-bin qemuSystemBinary] [-m memoryForSystem] [(image filename)]"
     exit
 }
 
@@ -21,6 +21,7 @@ do
     fi
     case "$arg" in
        --help)    set -- "$@" -h ;;
+       --efi)   set -- "$@" -e ;;
        --pcnet)   set -- "$@" -p ;;
        --qemu-bin) set -- "$@" -b ;;
        --image)   set -- "$@" -i ;;
@@ -29,9 +30,10 @@ do
     esac
 done
 # now we can process with getopt
-while getopts ":hpb:i:m:" opt; do
+while getopts ":hepb:i:m:" opt; do
     case $opt in
         h)  usage ;;
+        e) EFIBOOT="T" ;;
         p) NIC="pcnet" ;;
         b) QEMUSYS=$OPTARG ;;
         m) RAM=$OPTARG ;;
@@ -66,8 +68,7 @@ if [ "$NIC" = "virtio" ]; then
 fi
 
 OVMF_BIN="${OVMF_BIN-/usr/share/qemu/OVMF.fd}"
-if echo ${IMG} | grep -q '.Win10.'; then
-    # Win10 images require EFI for booting
+if [ -n "${EFIBOOT-}" ]; then
     [ -f "${OVMF_BIN}" ] || {
         echo "${OVMF_BIN} is not avialable, install the ovmf package or set OVMF_BIN to the location of OVMF.fd"
         exit 1
