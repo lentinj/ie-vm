@@ -37,6 +37,7 @@ Using
 #. Run ``fetch.sh http://../IE11/IE11.Win7.VirtualBox.zip`` and wait.
 #. Run ``start.sh (name of image)``. Or omit the name if you want to run the
    most recent QCOW2 file.
+#. If the VM asks you for a login, it should be ``IEUser`` / ``Passw0rd!``.
 #. Install the virtio drivers from the CD drive. Change anything else you fancy
    whilst you're there, e.g. home page to ``http://10.0.2.2:8000`` (your laptop's
    port 8000).
