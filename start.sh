@@ -10,13 +10,16 @@ RAM="1024M"
 # modified version of https://gist.github.com/adamhotep/895cebf290e95e613c006afbffef09d7
 usage() {
     cat <<EOF
-    usage: start.sh (options) [(image filename)]
+    usage: $0 (options) [(image filename)]
 
     --efi                  Use EFI to boot instead of legacy MBR
     --qemu-bin (path)      Path to QEMU binary, default "${QEMUSYS}"
     --ram (amount)         Amount of VM RAM, default "${RAM}"
     --no-virtio            Emulate devices that don't require virtio drivers (i.e. std VGA/pcnet NIC)
     (image filename)       QEMU image to load, defaut "${IMG}"
+
+    Any additional QEMU arguments can be given with the EXTRA_ARGS environment variable, e.g.
+        EXTRA_ARGS="-cdrom refind-cd-0.11.4.iso -boot d" $0
 EOF
     exit
 }
@@ -60,7 +63,7 @@ shift $((OPTIND-1))
 # If there's a positional argument, then use this as image name
 [ -n "$1" ] && { IMG="$1"; shift; }
 
-EXTRA_ARGS=""
+EXTRA_ARGS="${EXTRA_ARGS-}"
 
 if [ "$NIC" = "virtio" ] || [ "$VGA" = "qxl" ]; then
     LOCAL_ISO="$(ls -1t virtio*.iso | head -1)" 2>/dev/null
