@@ -39,11 +39,12 @@ Using
    If you have an old version of qemu-img installed, you may need to specify ``--vmdk2``
    to patch the VMDK file before converting it.
 #. Run ``start.sh (name of image)``. Or omit the name if you want to run the
-   most recent QCOW2 file.
+   most recent QCOW2 file. Use ``start.sh -h`` to see available options.
 #. If the VM asks you for a login, it should be ``IEUser`` / ``Passw0rd!``.
-#. Install the virtio drivers from the CD drive. Change anything else you fancy
-   whilst you're there, e.g. home page to ``http://10.0.2.2:8000`` (your laptop's
-   port 8000).
+#. If you did not specify ``--no-virtio``, go to device manager and install
+   drivers for the graphics card and NIC from the CD drive.
+   Change anything else you fancy whilst you're there, e.g. screen resolution
+   or home page to ``http://10.0.2.2:8000`` (your laptop's port 8000).
 #. Shut down windows, note qemu is still running.
 #. At the QEMU command prompt, run ``commit ide0-hd0`` to write changes back to
    the QCOW2 file.
@@ -59,6 +60,12 @@ Code 39 when installing VirtIO drivers
 
 Vista and WinXP can use the Win8 driver incorrectly. Select the directory manually
 and then install.
+
+Blue screen after installing VirtIO QXL VGA drivers
+---------------------------------------------------
+
+`Windows 7 doesn't work with the qxldod driver <https://github.com/virtio-win/kvm-guest-drivers-windows/issues/244>`__.
+Delete ``virtio-win.iso`` and re-install.
 
 Creating a specialised VM
 -------------------------

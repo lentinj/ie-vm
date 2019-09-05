@@ -1,6 +1,7 @@
 #!/bin/sh -e
 
 NIC="virtio"
+VGA="qxl"
 QEMUSYS="$(which qemu-system-x86_64)"
 IMG="$(ls -1t *.qcow2 | head -1)"
 RAM="1024M"
@@ -12,9 +13,9 @@ usage() {
     usage: start.sh (options) [(image filename)]
 
     --efi                  Use EFI to boot instead of legacy MBR
-    --pcnet                Use PCNET NIC instead of default "${NIC}"
     --qemu-bin (path)      Path to QEMU binary, default "${QEMUSYS}"
     --ram (amount)         Amount of VM RAM, default "${RAM}"
+    --no-virtio            Emulate devices that don't require virtio drivers (i.e. std VGA/pcnet NIC)
     (image filename)       QEMU image to load, defaut "${IMG}"
 EOF
     exit
@@ -33,18 +34,20 @@ do
        --pcnet)   set -- "$@" -p ;;
        --qemu-bin) set -- "$@" -b ;;
        --ram) set -- "$@" -m ;;
+       --no-virtio)   set -- "$@" -n ;;
        # pass through anything else
        *)         set -- "$@" "$arg" ;;
     esac
 done
 # now we can process with getopt
-while getopts ":hepb:m:" opt; do
+while getopts ":hepb:m:n" opt; do
     case $opt in
         h)  usage ;;
         e) EFIBOOT="T" ;;
         p) NIC="pcnet" ;;
         b) QEMUSYS=$OPTARG ;;
         m) RAM=$OPTARG ;;
+        n) NIC="pcnet" ; VGA="std" ;;
         \?) usage ;;
         :)
         echo "option -$OPTARG requires an argument"
@@ -59,7 +62,7 @@ shift $((OPTIND-1))
 
 EXTRA_ARGS=""
 
-if [ "$NIC" = "virtio" ]; then
+if [ "$NIC" = "virtio" ] || [ "$VGA" = "qxl" ]; then
     LOCAL_ISO="$(ls -1t virtio*.iso | head -1)" 2>/dev/null
     if [ -n "${LOCAL_ISO}" ]; then
         echo "Using local ISO file ${LOCAL_ISO}"
@@ -94,5 +97,5 @@ $QEMUSYS -enable-kvm \
     -usb -device usb-ehci,id=ehci \
     -device usb-tablet \
     -monitor stdio \
-    -vga std \
+    -vga "${VGA}" \
     -snapshot -no-shutdown
