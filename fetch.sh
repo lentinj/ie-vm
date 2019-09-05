@@ -1,16 +1,57 @@
 #!/bin/sh -e
 
-[ -z "$1" ] && { echo "Usage: $0 [url to IE.txt  / .zip file]"; exit 1; }
+URL=""
+
+# support more options
+# modified version of https://gist.github.com/adamhotep/895cebf290e95e613c006afbffef09d7
+usage() {
+    cat <<EOF
+    usage: $0 (url to IE.txt  / .zip file)
+
+    (url)                  URL for downloading image, as produced by ie-urls.sh
+EOF
+    exit
+}
+
+reset=true
+for arg in "$@"
+do
+    if [ -n "$reset" ]; then
+      unset reset
+      set --      # this resets the "$@" array so we can rebuild it
+    fi
+    case "$arg" in
+       --help)    set -- "$@" -h ;;
+       # pass through anything else
+       *)         set -- "$@" "$arg" ;;
+    esac
+done
+# now we can process with getopt
+while getopts ":h" opt; do
+    case $opt in
+        h)  usage ;;
+        \?) usage ;;
+        :)
+        echo "option -$OPTARG requires an argument"
+        usage
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+# Use positional argument as URL
+[ -n "$1" ] && { URL="$1"; shift; }
+[ -z "${URL}" ] && { echo "Usage: $0 [url to IE.txt  / .zip file]"; exit 1; }
 
 # Fetch files required
-if echo "$1" | grep -qE '\.zip$'; then
+if echo "${URL}" | grep -qE '\.zip$'; then
     # Fetch ZIP file
-    TMP_DIR="./workdir-$(basename "$1" .zip | sed 's/%20/ /')"
-    wget -c -P "$TMP_DIR" "$1"
+    TMP_DIR="./workdir-$(basename "${URL}" .zip | sed 's/%20/ /')"
+    wget -c -P "$TMP_DIR" "${URL}"
 else
     # Fetch each part of zip file
-    TMP_DIR="./workdir-$(basename "$1" .txt)"
-    wget -q -O - "$1" | tr -d "\r" | xargs -n1 -P8 wget -c -P "$TMP_DIR"
+    TMP_DIR="./workdir-$(basename "${URL}" .txt)"
+    wget -q -O - "${URL}" | tr -d "\r" | xargs -n1 -P8 wget -c -P "$TMP_DIR"
 fi
 
 # Extract VMDK from archive
