@@ -85,6 +85,7 @@ if [ -n "${EFIBOOT-}" ]; then
 fi
 
 $QEMUSYS -enable-kvm \
+    -cpu host \
     -drive "file=$IMG" \
     ${EXTRA_ARGS} \
     -net nic,model=$NIC \
