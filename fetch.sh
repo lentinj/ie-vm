@@ -1,13 +1,15 @@
 #!/bin/sh -e
 
+VMDK2_PATCH=""
 URL=""
 
 # support more options
 # modified version of https://gist.github.com/adamhotep/895cebf290e95e613c006afbffef09d7
 usage() {
     cat <<EOF
-    usage: $0 (url to IE.txt  / .zip file)
+    usage: $0 [--vmdk2] (url to IE.txt  / .zip file)
 
+    --vmdk2                Hack VMDK image into a v2 image, not required by qemu-img 1.7.0+
     (url)                  URL for downloading image, as produced by ie-urls.sh
 EOF
     exit
@@ -22,14 +24,16 @@ do
     fi
     case "$arg" in
        --help)    set -- "$@" -h ;;
+       --vmdk2)   set -- "$@" -v ;;
        # pass through anything else
        *)         set -- "$@" "$arg" ;;
     esac
 done
 # now we can process with getopt
-while getopts ":h" opt; do
+while getopts ":hv" opt; do
     case $opt in
         h)  usage ;;
+        v) VMDK2_PATCH="1" ;;
         \?) usage ;;
         :)
         echo "option -$OPTARG requires an argument"
@@ -59,28 +63,30 @@ cat "$TMP_DIR"/*.zip* | funzip | tar -xvC "$TMP_DIR"
 VMDK="$(echo "$TMP_DIR"/*.vmdk)"
 [ -e "$VMDK" ] || { echo "No VMDK extracted" 1>&2; exit 1; }
 
-# Hack into a VMDK2 image (from https://github.com/erik-smit/one-liners/blob/master/qemu-img.vmdk3.hack.sh)
-FULLSIZE=$(stat -c%s "$VMDK")
-VMDKFOOTER=$(($FULLSIZE - 0x400))
-VMDKFOOTERVER=$(($VMDKFOOTER  + 4))
+if [ -n "${VMDK2_PATCH}" ]; then
+    # Hack into a VMDK2 image (from https://github.com/erik-smit/one-liners/blob/master/qemu-img.vmdk3.hack.sh)
+    FULLSIZE=$(stat -c%s "$VMDK")
+    VMDKFOOTER=$(($FULLSIZE - 0x400))
+    VMDKFOOTERVER=$(($VMDKFOOTER  + 4))
 
-case "`xxd -ps -s $VMDKFOOTERVER -l 1 \"$VMDK\"`" in
-  03)
-    echo "$VMDK is VMDK3, patching to VMDK2."
-    /bin/echo -en '\x02' | dd conv=notrunc \
-                              status=noxfer \
-                              bs=1 \
-                              seek="$VMDKFOOTERVER" \
-                              of="$VMDK"
-    ;;
-  02)
-    echo "Already a VMDK2 file"
-    ;;
-  default)
-    echo "$VMDK is neither version 2 or 3"
-    exit 1
-  ;;
-esac
+    case "`xxd -ps -s $VMDKFOOTERVER -l 1 \"$VMDK\"`" in
+      03)
+        echo "$VMDK is VMDK3, patching to VMDK2."
+        /bin/echo -en '\x02' | dd conv=notrunc \
+                                  status=noxfer \
+                                  bs=1 \
+                                  seek="$VMDKFOOTERVER" \
+                                  of="$VMDK"
+        ;;
+      02)
+        echo "Already a VMDK2 file"
+        ;;
+      default)
+        echo "$VMDK is neither version 2 or 3"
+        exit 1
+      ;;
+    esac
+fi
 
 # Convert into QCOW2
 QCOW2="$(basename "$TMP_DIR"/*.ovf .ovf).qcow2"

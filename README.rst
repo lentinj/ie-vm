@@ -34,7 +34,10 @@ Using
 #. Run ``ie-urls.sh`` to list available Windows / IE images, or go to http://modern.ie
    and select the VM you require and "Virtualbox", and copy the .zip location in the
    download link.
-#. Run ``fetch.sh http://../IE11/IE11.Win7.VirtualBox.zip`` and wait.
+#. Run ``fetch.sh http://../IE11/IE11.Win7.VirtualBox.zip`` and wait. You can break
+   out of the download and resume it at a later point if necessary.
+   If you have an old version of qemu-img installed, you may need to specify ``--vmdk2``
+   to patch the VMDK file before converting it.
 #. Run ``start.sh (name of image)``. Or omit the name if you want to run the
    most recent QCOW2 file.
 #. If the VM asks you for a login, it should be ``IEUser`` / ``Passw0rd!``.
