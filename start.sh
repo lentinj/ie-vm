@@ -1,14 +1,22 @@
 #!/bin/sh -e
 
 NIC="virtio"
-QEMUSYS="qemu-system-x86_64"
+QEMUSYS="$(which qemu-system-x86_64)"
 IMG="$(ls -1t *.qcow2 | head -1)"
 RAM="1024M"
 
 # support more options
 # modified version of https://gist.github.com/adamhotep/895cebf290e95e613c006afbffef09d7
 usage() {
-    echo "start.sh [--efi] [--pcnet] [--qemu-bin qemuSystemBinary] [-m memoryForSystem] [(image filename)]"
+    cat <<EOF
+    usage: start.sh (options) [(image filename)]
+
+    --efi                  Use EFI to boot instead of legacy MBR
+    --pcnet                Use PCNET NIC instead of default "${NIC}"
+    --qemu-bin (path)      Path to QEMU binary, default "${QEMUSYS}"
+    --ram (amount)         Amount of VM RAM, default "${RAM}"
+    (image filename)       QEMU image to load, defaut "${IMG}"
+EOF
     exit
 }
 
@@ -24,13 +32,13 @@ do
        --efi)   set -- "$@" -e ;;
        --pcnet)   set -- "$@" -p ;;
        --qemu-bin) set -- "$@" -b ;;
-       --image)   set -- "$@" -i ;;
+       --ram) set -- "$@" -m ;;
        # pass through anything else
        *)         set -- "$@" "$arg" ;;
     esac
 done
 # now we can process with getopt
-while getopts ":hepb:i:m:" opt; do
+while getopts ":hepb:m:" opt; do
     case $opt in
         h)  usage ;;
         e) EFIBOOT="T" ;;
