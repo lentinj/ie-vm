@@ -19,12 +19,10 @@ Prerequisites
 -------------
 
 wget & QEMU must be installed.
-In addition `OVMF <https://github.com/tianocore/tianocore.github.io/wiki/OVMF>`__
-is needed for running Win10 VMs.
 
 Debian / apt-based distributions::
 
-    apt install wget qemu-system-x86 qemu-system-gui ovmf
+    apt install wget qemu-system-x86 qemu-system-gui
 
 Using
 -----
