@@ -43,6 +43,7 @@ Using
    drivers for the graphics card and NIC from the CD drive.
    Change anything else you fancy whilst you're there, e.g. screen resolution
    or home page to ``http://10.0.2.2:8000`` (your laptop's port 8000).
+#. Disable Windows Defender AV, as it slows down the VM images dramatically.
 #. Shut down windows, note qemu is still running.
 #. At the QEMU command prompt, run ``commit ide0-hd0`` to write changes back to
    the QCOW2 file.
