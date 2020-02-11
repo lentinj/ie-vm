@@ -66,18 +66,17 @@ shift $((OPTIND-1))
 EXTRA_ARGS="${EXTRA_ARGS-}"
 
 if [ "$NIC" = "virtio" ] || [ "$VGA" = "qxl" ]; then
-    LOCAL_ISO="$(ls -1t virtio*.iso | head -1)" 2>/dev/null
-    if [ -n "${LOCAL_ISO}" ]; then
-        echo "Using local ISO file ${LOCAL_ISO}"
-        EXTRA_ARGS="${EXTRA_ARGS} -cdrom ${LOCAL_ISO}"
-    elif [ -e "/usr/share/virtio-win/virtio-win.iso" ]; then
+    if [ -e "/usr/share/virtio-win/virtio-win.iso" ]; then
         # RH now have a package
         echo "Using ISO from virtio-win package."
         EXTRA_ARGS="${EXTRA_ARGS} -cdrom /usr/share/virtio-win/virtio-win.iso"
     else
-        echo Fetching virtIO drivers...
-        wget https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
-        EXTRA_ARGS="${EXTRA_ARGS} -cdrom virtio-win.iso"
+        VIRTIO_ISO="$(wget -q -S --spider https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso 2>&1 | grep -oE 'virtio-win-[0-9.]+.iso')"
+        [ -e "${VIRTIO_ISO}" ] || {
+            echo Fetching virtIO drivers...
+            wget -O "${VIRTIO_ISO}" https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
+        }
+        EXTRA_ARGS="${EXTRA_ARGS} -cdrom ${VIRTIO_ISO}"
     fi
 fi
 
