@@ -46,6 +46,7 @@ Using
 #. Shut down windows, note qemu is still running.
 #. At the QEMU command prompt, run ``commit ide0-hd0`` to write changes back to
    the QCOW2 file.
+#. If you installed the VirtIO SCSI drivers you can now run the image with ``--disk-virtio``.
 #. Delete the ``workdir-*`` once you're happy everything worked. If
    something went wrong you can run ``./fetch.sh`` again to regenerate the
    QCOW2 file. It will not re-download files.

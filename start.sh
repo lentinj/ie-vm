@@ -2,6 +2,7 @@
 
 NIC="virtio"
 VGA="qxl"
+DISK="ide"
 QEMUSYS="$(which qemu-system-x86_64)"
 IMG="$(ls -1t *.qcow2 | head -1)"
 RAM="1024M"
@@ -16,6 +17,7 @@ usage() {
     --qemu-bin (path)      Path to QEMU binary, default "${QEMUSYS}"
     --ram (amount)         Amount of VM RAM, default "${RAM}"
     --no-virtio            Emulate devices that don't require virtio drivers (i.e. std VGA/pcnet NIC)
+    --disk-virtio          Force the disk to also use virtio. Boot without this first and install SCSI drivers
     (image filename)       QEMU image to load, defaut "${IMG}"
 
     Any additional QEMU arguments can be given with the EXTRA_ARGS environment variable, e.g.
@@ -38,12 +40,13 @@ do
        --qemu-bin) set -- "$@" -b ;;
        --ram) set -- "$@" -m ;;
        --no-virtio)   set -- "$@" -n ;;
+       --disk-virtio)   set -- "$@" -d ;;
        # pass through anything else
        *)         set -- "$@" "$arg" ;;
     esac
 done
 # now we can process with getopt
-while getopts ":hepb:m:n" opt; do
+while getopts ":hepb:m:nd" opt; do
     case $opt in
         h)  usage ;;
         e) EFIBOOT="T" ;;
@@ -51,6 +54,7 @@ while getopts ":hepb:m:n" opt; do
         b) QEMUSYS=$OPTARG ;;
         m) RAM=$OPTARG ;;
         n) NIC="pcnet" ; VGA="std" ;;
+        d) DISK="virtio" ;;
         \?) usage ;;
         :)
         echo "option -$OPTARG requires an argument"
@@ -65,7 +69,7 @@ shift $((OPTIND-1))
 
 EXTRA_ARGS="${EXTRA_ARGS-}"
 
-if [ "$NIC" = "virtio" ] || [ "$VGA" = "qxl" ]; then
+if [ "$NIC" = "virtio" ] || [ "$VGA" = "qxl" ] || [ "$DISK" = "virtio" ]; then
     if [ -e "/usr/share/virtio-win/virtio-win.iso" ]; then
         # RH now have a package
         echo "Using ISO from virtio-win package."
@@ -77,6 +81,13 @@ if [ "$NIC" = "virtio" ] || [ "$VGA" = "qxl" ]; then
             wget -O "${VIRTIO_ISO}" https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
         }
         EXTRA_ARGS="${EXTRA_ARGS} -cdrom ${VIRTIO_ISO}"
+    fi
+
+    if [ "$DISK" != "virtio" ]; then
+        # A dummy disk whose only purpose is to trigger VirtIO driver installs
+        VIRTIO_TRIGGER="virtio-driver-install-trigger.qcow2"
+        [ -f "${VIRTIO_TRIGGER}" ] || qemu-img create -f qcow2 "${VIRTIO_TRIGGER}" 1M
+        EXTRA_ARGS="${EXTRA_ARGS} drive file=${VIRTIO_TRIGGER},if=virtio"
     fi
 fi
 
@@ -91,7 +102,7 @@ fi
 
 $QEMUSYS -enable-kvm \
     -cpu host \
-    -drive "file=$IMG" \
+    -drive file="$IMG",if="$DISK" \
     ${EXTRA_ARGS} \
     -net nic,model=$NIC \
     -net user \
