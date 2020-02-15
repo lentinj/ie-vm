@@ -87,7 +87,7 @@ if [ "$NIC" = "virtio" ] || [ "$VGA" = "qxl" ] || [ "$DISK" = "virtio" ]; then
         # A dummy disk whose only purpose is to trigger VirtIO driver installs
         VIRTIO_TRIGGER="virtio-driver-install-trigger.qcow2"
         [ -f "${VIRTIO_TRIGGER}" ] || qemu-img create -f qcow2 "${VIRTIO_TRIGGER}" 1M
-        EXTRA_ARGS="${EXTRA_ARGS} drive file=${VIRTIO_TRIGGER},if=virtio"
+        EXTRA_ARGS="${EXTRA_ARGS} -drive file=${VIRTIO_TRIGGER},if=virtio"
     fi
 fi
 
