@@ -67,6 +67,21 @@ Blue screen after installing VirtIO QXL VGA drivers
 `Windows 7 doesn't work with the qxldod driver <https://github.com/virtio-win/kvm-guest-drivers-windows/issues/244>`__.
 Delete ``virtio-win.iso`` and re-install.
 
+Disabling Windows defender AV on Windows 10
+-------------------------------------------
+
+Windows 10 VMs aren't very usable until it is disabled. First:
+
+* Settings -> "Windows Defender Settings" -> "Virus & threat protection"
+* Untick all the sliders
+
+Then, to permanently disable:
+
+* Start -> "gpedit.msc"
+* "Computer Configuration" -> "Administrative Templates" -> "Windows Components" -> "Windows Defender Antivirus"
+* "Turn off Windows Defender Antivirus" policy
+* "Enable" and OK
+
 Creating a specialised VM
 -------------------------
 
