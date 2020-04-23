@@ -90,3 +90,21 @@ just copy the .qcow2, however that's a lot of diskspace. Instead you can create
 a new image that's based on the contents of another file, for example::
 
     qemu-img create -f qcow2 -b "IE9 - Win7.qcow2" MyProject.IE9.Win7.qcow2
+
+Passing through laptop's touchscreen
+------------------------------------
+
+My laptop has a multitouch touchscreen:
+
+    # lsusb -d 1fd2:6007
+    Bus 001 Device 006: ID 1fd2:6007 Melfas LGDisplay Incell Touch
+
+If I temporarily grant read-write to the usb device:
+
+    # ls -l /dev/bus/usb/001/006
+    crw-rw-r-- 1 root root 189, 5 Apr 21 10:31 /dev/bus/usb/001/006
+    # chmod a+rw /dev/bus/usb/001/006
+
+...then QEMU can claim it and I can use it directly under QEMU, testing pinch-zoom effects:
+
+    EXTRA_ARGS="-device usb-host,vendorid=0x1fd2,productid=0x6007" ./start.sh . . .
