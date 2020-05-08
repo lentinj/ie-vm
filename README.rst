@@ -22,39 +22,58 @@ wget & QEMU must be installed.
 
 Debian / apt-based distributions::
 
-    apt install wget qemu-system-x86 qemu-system-gui
+    apt install wget unzip qemu-system-x86 qemu-system-gui qemu-utils
 
-Using
------
+Preparing a VM image
+--------------------
 
-#. Ensure depenencies are installed with
-   ``apt-get install wget unzip qemu-system-x86 qemu-utils``
 #. Run ``ie-urls.sh`` to list available Windows / IE images, or go to http://modern.ie
    and select the VM you require and "Virtualbox", and copy the .zip location in the
    download link.
 #. Run ``fetch.sh http://../IE11/IE11.Win7.VirtualBox.zip`` and wait. You can break
    out of the download and resume it at a later point if necessary.
-   If you have an old version of qemu-img installed, you may need to specify ``--vmdk2``
-   to patch the VMDK file before converting it.
 #. Run ``start.sh (name of image)``. Or omit the name if you want to run the
    most recent QCOW2 file. Use ``start.sh -h`` to see available options.
 #. If the VM asks you for a login, it should be ``IEUser`` / ``Passw0rd!``.
 #. Install virtIO drivers (if you did not specify ``--no-virtio``):
-   #. Go to "Settings" -> "Device Manager"
-   #. For each unknown device, right-click and select "Update driver"
-   #. Select "Browse my computer for the driver software"
-   #. Select the CD drive (D:), Windows will work out which driver within to install
-#. Disable Windows Defender AV, as it slows down the VM images dramatically.
-#. Shut down windows, note qemu is still running.
-#. At the QEMU command prompt, run ``commit ide0-hd0`` to write changes back to
-   the QCOW2 file.
-#. If you installed the VirtIO SCSI drivers you can now run the image with ``--disk-virtio``.
-#. Delete the ``workdir-*`` once you're happy everything worked. If
-   something went wrong you can run ``./fetch.sh`` again to regenerate the
-   QCOW2 file. It will not re-download files.
 
-After this, you won't ever need to shut windows down properly, since by default
-start.sh writes changes to a temporary file and does not change the QCOW2 file.
+      #. Go to "Settings" -> "Device Manager"
+      #. For each unknown device, right-click and select "Update driver"
+      #. Select "Browse my computer for the driver software"
+      #. Select the CD drive (D:), Windows will work out which driver within to install
+
+#. Disable Windows Defender AV:
+
+      #. Settings -> "Windows Defender Settings" -> "Virus & threat protection"
+      #. Untick all the sliders
+      #. Start menu -> type in "gpedit.msc"
+      #. "Computer Configuration" -> "Administrative Templates" -> "Windows Components" -> "Windows Defender Antivirus"
+      #. "Turn off Windows Defender Antivirus" policy
+      #. "Enable" and OK
+
+#. Miscallaneous:
+
+     #. Set screen resolution
+     #. Set home page to ``http://10.0.2.2:8000`` (your laptop's port 8000)
+
+#. Shut down windows, note qemu is still running.
+#. At the QEMU monitor console (in the terminal you ran ``./start.sh`` from),
+   run ``commit ide0-hd0`` to write changes back to the QCOW2 file.
+#. Quit QEMU with ``quit`` at the console
+#. Delete the ``workdir-*`` once you're happy everything worked.
+
+Running a VM image
+------------------
+
+Run ``./start.sh (name of .qcow2 file)``. By default any changes to the VM will
+be written to a temporary file, so the machine will always start up in the same
+state. Use ``commit virtio0`` if you wish to update the QCOW2 image.
+
+If you want to have a VM that's customised for your project somehow, you could
+just copy the .qcow2, however that's a lot of diskspace. Instead you can create
+a new image that's based on the contents of another file, for example::
+
+    qemu-img create -f qcow2 -b "IE9 - Win7.qcow2" MyProject.IE9.Win7.qcow2
 
 Code 39 when installing VirtIO drivers
 --------------------------------------
@@ -67,30 +86,6 @@ Blue screen after installing VirtIO QXL VGA drivers
 
 `Windows 7 doesn't work with the qxldod driver <https://github.com/virtio-win/kvm-guest-drivers-windows/issues/244>`__.
 Delete ``virtio-win.iso`` and re-install.
-
-Disabling Windows defender AV on Windows 10
--------------------------------------------
-
-Windows 10 VMs aren't very usable until it is disabled. First:
-
-* Settings -> "Windows Defender Settings" -> "Virus & threat protection"
-* Untick all the sliders
-
-Then, to permanently disable:
-
-* Start -> "gpedit.msc"
-* "Computer Configuration" -> "Administrative Templates" -> "Windows Components" -> "Windows Defender Antivirus"
-* "Turn off Windows Defender Antivirus" policy
-* "Enable" and OK
-
-Creating a specialised VM
--------------------------
-
-If you want to have a VM that's customised for your project somehow, you could
-just copy the .qcow2, however that's a lot of diskspace. Instead you can create
-a new image that's based on the contents of another file, for example::
-
-    qemu-img create -f qcow2 -b "IE9 - Win7.qcow2" MyProject.IE9.Win7.qcow2
 
 Passing through laptop's touchscreen
 ------------------------------------
