@@ -40,7 +40,7 @@ Preparing a VM image
       #. Go to "Settings" -> "Device Manager"
       #. For each unknown device, right-click and select "Update driver"
       #. Select "Browse my computer for the driver software"
-      #. Select the CD drive (D:), Windows will work out which driver within to install
+      #. Select the CD drive (D: virtio-win-x.x), Windows will work out which driver within to install
 
 #. Disable Windows Defender AV:
 
