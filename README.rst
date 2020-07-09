@@ -38,7 +38,7 @@ Preparing a VM image
 #. Install virtIO drivers (if you did not specify ``--no-virtio``):
 
       #. Go to "Settings" -> "Device Manager"
-      #. For each unknown device, right-click and select "Update driver"
+      #. For each unknown device, as well as for the display adapter, right-click and select "Update driver"
       #. Select "Browse my computer for the driver software"
       #. Select the CD drive (D: virtio-win-x.x), Windows will work out which driver within to install
 
@@ -68,6 +68,15 @@ Running a VM image
 Run ``./start.sh (name of .qcow2 file)``. By default any changes to the VM will
 be written to a temporary file, so the machine will always start up in the same
 state. Use ``commit virtio0`` if you wish to update the QCOW2 image.
+
+Once you have prepared your VM image, including installing the VirtIO SCSI
+controller, add ``--disk-virtio`` to the start.sh arguments in order to use it.
+
+For better performance, you may want to customise the number of CPUs (default: 1)
+and amount of memory (default 1024MB) granted to the VM. This can be done as
+follows, for example::
+
+    EXTRA_ARGS='-smp cpus=4' ./start.sh --disk-virtio --ram 4096M "MSEdge - Win10.qcow2"
 
 If you want to have a VM that's customised for your project somehow, you could
 just copy the .qcow2, however that's a lot of diskspace. Instead you can create
