@@ -1,5 +1,6 @@
 #!/bin/sh -e
 
+EFIBOOT="efi"
 NIC="virtio"
 VGA="qxl"
 DISK="ide"
@@ -13,7 +14,7 @@ usage() {
     cat <<EOF
     usage: $0 (options) [(image filename)]
 
-    --efi                  Use EFI to boot instead of legacy MBR
+    --mbr                  Use legacy MBR to boot instead of EFI
     --qemu-bin (path)      Path to QEMU binary, default "${QEMUSYS}"
     --ram (amount)         Amount of VM RAM, default "${RAM}"
     --no-virtio            Emulate devices that don't require virtio drivers (i.e. std VGA/pcnet NIC)
@@ -35,7 +36,7 @@ do
     fi
     case "$arg" in
        --help)    set -- "$@" -h ;;
-       --efi)   set -- "$@" -e ;;
+       --mbr)   set -- "$@" -e ;;
        --pcnet)   set -- "$@" -p ;;
        --qemu-bin) set -- "$@" -b ;;
        --ram) set -- "$@" -m ;;
@@ -49,7 +50,7 @@ done
 while getopts ":hepb:m:nd" opt; do
     case $opt in
         h)  usage ;;
-        e) EFIBOOT="T" ;;
+        e) EFIBOOT="mbr" ;;
         p) NIC="pcnet" ;;
         b) QEMUSYS=$OPTARG ;;
         m) RAM=$OPTARG ;;
@@ -92,7 +93,7 @@ if [ "$NIC" = "virtio" ] || [ "$VGA" = "qxl" ] || [ "$DISK" = "virtio" ]; then
 fi
 
 OVMF_BIN="${OVMF_BIN-/usr/share/qemu/OVMF.fd}"
-if [ -n "${EFIBOOT-}" ]; then
+if [ "${EFIBOOT-efi}" == "efi" ]; then
     [ -f "${OVMF_BIN}" ] || {
         echo "${OVMF_BIN} is not avialable, install the ovmf package or set OVMF_BIN to the location of OVMF.fd"
         exit 1
