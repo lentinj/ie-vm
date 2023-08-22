@@ -47,16 +47,9 @@ shift $((OPTIND-1))
 [ -n "$1" ] && { URL="$1"; shift; }
 [ -z "${URL}" ] && { echo "Usage: $0 [url to IE.txt  / .zip file]"; exit 1; }
 
-# Fetch files required
-if echo "${URL}" | grep -qE '\.zip$'; then
-    # Fetch ZIP file
-    TMP_DIR="./workdir-$(basename "${URL}" .zip | sed 's/%20/ /')"
-    wget -c -P "$TMP_DIR" "${URL}"
-else
-    # Fetch each part of zip file
-    TMP_DIR="./workdir-$(basename "${URL}" .txt)"
-    wget -q -O - "${URL}" | tr -d "\r" | xargs -n1 -P8 wget -c -P "$TMP_DIR"
-fi
+# Fetch ZIP file
+TMP_DIR="./workdir-$(basename "${URL}" .zip | sed 's/%20/ /')"
+wget -c --content-disposition -P "$TMP_DIR" "${URL}"
 
 # Extract VMDK from archive
 cat "$TMP_DIR"/*.zip* | funzip | tar -xvC "$TMP_DIR"
