@@ -6,7 +6,7 @@ VGA="qxl"
 DISK="ide"
 QEMUSYS="$(which qemu-system-x86_64)"
 IMG="$(ls -1t *.qcow2 | head -1)"
-RAM="1024M"
+RAM="4G"
 
 # support more options
 # modified version of https://gist.github.com/adamhotep/895cebf290e95e613c006afbffef09d7
