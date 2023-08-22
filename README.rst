@@ -58,7 +58,7 @@ Preparing a VM image
       #. Settings -> "Windows Defender Settings" -> "Virus & threat protection"
       #. Untick all the sliders
       #. Start menu -> type in "gpedit.msc"
-      #. "Computer Configuration" -> "Administrative Templates" -> "Windows Components" -> "Windows Defender Antivirus"
+      #. "Computer Configuration" -> "Administrative Templates" -> "Windows Components" -> "Microsoft Defender Antivirus" (or "Windows Defender Antivirus")
       #. "Turn off Windows Defender Antivirus" policy
       #. "Enable" and OK
 
