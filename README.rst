@@ -1,3 +1,14 @@
+DEPRECATED
+==========
+
+Similar to Internet Explorer, modern.ie VMs are no more. Windows VMs are available at the following sources:
+
+* https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/
+* https://www.microsoft.com/evalcenter/evaluate-windows-10-enterprise
+* https://www.microsoft.com/evalcenter/evaluate-windows-11-enterprise
+
+But this repository does not (currently) help with using them under QEMU.
+
 modern.ie VMs under KVM/QEMU
 ============================
 
