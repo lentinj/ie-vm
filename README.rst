@@ -1,27 +1,12 @@
-DEPRECATED
-==========
-
-Similar to Internet Explorer, modern.ie VMs are no more. Windows VMs are available at the following sources:
-
-* https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/
-* https://www.microsoft.com/evalcenter/evaluate-windows-10-enterprise
-* https://www.microsoft.com/evalcenter/evaluate-windows-11-enterprise
-
-But this repository does not (currently) help with using them under QEMU.
-
-modern.ie VMs under KVM/QEMU
-============================
+Windows evaluation VMs under KVM/QEMU
+=====================================
 
 Automates the process of getting the modern.ie images and converting them for
 usage with KVM. There are 3 scripts:
 
-ie-urls.sh
-    Attempt to parse the relevant .zip download URLs from the modern.ie
-    page
 fetch.sh (url)
     Given a URL to a VM .zip file, uncompress and convert into a QCOW2 file for use with QEMU,
     which will be waiting for you in the current directory.
-    Will also support a URL to a .txt file full of .zip part URLs, although MS seem to have deprecated this.
 start.sh (QCOW image)
     Fetch virtio.iso if not already there, and start the image with reasonable
     options
@@ -33,19 +18,21 @@ wget & QEMU must be installed.
 
 Debian / apt-based distributions::
 
-    apt install wget unzip qemu-system-x86 qemu-system-gui qemu-utils
+    apt install wget unzip qemu-system-x86 qemu-system-gui qemu-utils ovmf
+
+Visit the Microsoft web-pages first and inspect the EULAs you are implicitly accepting:
+
+* https://developer.microsoft.com/en-us/windows/downloads/virtual-machines/
+* https://www.microsoft.com/evalcenter/evaluate-windows-10-enterprise
+* https://www.microsoft.com/evalcenter/evaluate-windows-11-enterprise
 
 Preparing a VM image
 --------------------
 
-#. Run ``ie-urls.sh`` to list available Windows / IE images, or go to http://modern.ie
-   and select the VM you require and "Virtualbox", and copy the .zip location in the
-   download link.
-#. Run ``fetch.sh http://../IE11/IE11.Win7.VirtualBox.zip`` and wait. You can break
+#. Run ``fetch.sh 'https://aka.ms/windev_VM_virtualbox'`` and wait. You can break
    out of the download and resume it at a later point if necessary.
 #. Run ``start.sh (name of image)``. Or omit the name if you want to run the
    most recent QCOW2 file. Use ``start.sh -h`` to see available options.
-#. If the VM asks you for a login, it should be ``IEUser`` / ``Passw0rd!``.
 #. Install virtIO drivers (if you did not specify ``--no-virtio``):
 
       #. Go to "Settings" -> "Device Manager"
@@ -84,28 +71,16 @@ Once you have prepared your VM image, including installing the VirtIO SCSI
 controller, add ``--disk-virtio`` to the start.sh arguments in order to use it.
 
 For better performance, you may want to customise the number of CPUs (default: 1)
-and amount of memory (default 1024MB) granted to the VM. This can be done as
+and amount of memory (default 4GB) granted to the VM. This can be done as
 follows, for example::
 
-    EXTRA_ARGS='-smp cpus=4' ./start.sh --disk-virtio --ram 4096M "MSEdge - Win10.qcow2"
+    EXTRA_ARGS='-smp cpus=4' ./start.sh --disk-virtio --ram 2GB "MSEdge - Win10.qcow2"
 
 If you want to have a VM that's customised for your project somehow, you could
 just copy the .qcow2, however that's a lot of diskspace. Instead you can create
 a new image that's based on the contents of another file, for example::
 
-    qemu-img create -f qcow2 -F qcow2 -b "IE9 - Win7.qcow2" MyProject.IE9.Win7.qcow2
-
-Code 39 when installing VirtIO drivers
---------------------------------------
-
-Vista and WinXP can use the Win8 driver incorrectly. Select the directory manually
-and then install.
-
-Blue screen after installing VirtIO QXL VGA drivers
----------------------------------------------------
-
-`Windows 7 doesn't work with the qxldod driver <https://github.com/virtio-win/kvm-guest-drivers-windows/issues/244>`__.
-Delete ``virtio-win.iso`` and re-install.
+    qemu-img create -f qcow2 -F qcow2 -b WinDev2308Eval.qcow2 MyProject.IE9.Win7.qcow2
 
 Passing through laptop's touchscreen
 ------------------------------------
