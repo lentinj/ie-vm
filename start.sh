@@ -93,7 +93,7 @@ if [ "$NIC" = "virtio" ] || [ "$VGA" = "qxl" ] || [ "$DISK" = "virtio" ]; then
 fi
 
 OVMF_BIN="${OVMF_BIN-/usr/share/qemu/OVMF.fd}"
-if [ "${EFIBOOT-efi}" == "efi" ]; then
+if [ "${EFIBOOT-efi}" = "efi" ]; then
     [ -f "${OVMF_BIN}" ] || {
         echo "${OVMF_BIN} is not avialable, install the ovmf package or set OVMF_BIN to the location of OVMF.fd"
         exit 1
