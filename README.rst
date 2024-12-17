@@ -7,7 +7,11 @@ Similar to Internet Explorer, modern.ie VMs are no more. Windows VMs are availab
 * https://www.microsoft.com/evalcenter/evaluate-windows-10-enterprise
 * https://www.microsoft.com/evalcenter/evaluate-windows-11-enterprise
 
-But this repository does not (currently) help with using them under QEMU.
+The ``win-11-dev-vm`` branch of this repository should work with the developer VM branch.
+
+Other similar projects:
+
+* https://github.com/dockur/windows/ - Automates Windows installs under docker/qemu, not tried as of yet
 
 modern.ie VMs under KVM/QEMU
 ============================
